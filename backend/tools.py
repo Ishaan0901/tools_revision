@@ -1,13 +1,17 @@
 from langchain_core.tools import tool
 from tavily import TavilyClient
 from dotenv import load_dotenv
+import requests
 load_dotenv()
 
-
+#                                                     Web Search Tool
 @tool
 def web_search(question:str)->str:
     '''
-    This tool is used to search the web for latest news, current events, real-time info.
+    Search the web for latest news, current events and real-time info.
+
+    Args:
+        question: The search query.
     '''
 
     try:
@@ -29,3 +33,56 @@ def web_search(question:str)->str:
         
     except Exception as e:
         return f'search failed ..{e}'
+
+
+
+#                                                      Weather Tool
+@tool
+def weather_tool(city:str)->str:
+    '''
+    Get the current weather (temperature, wind speed, weather code) of a city.
+
+    Args:
+        city: Name of the city, e.g. "Meerut".
+    '''
+    try:
+        # 1. Geocoding: city -> lat/lon
+        geo = requests.get(
+            "https://geocoding-api.open-meteo.com/v1/search",
+            params={"name": city, "count": 1},
+            timeout=10,
+        ).json()
+
+        # if city is not found then results key is not there
+        if 'results' not in geo:
+            return('city not found')
+
+        # geo["results"][0] contains latitude, longitude and other information
+        lat=geo['results'][0]['latitude']
+        lon=geo['results'][0]['longitude']
+
+
+        # 2. Forecast: lat/lon -> current weather
+        weather = requests.get(
+            "https://api.open-meteo.com/v1/forecast",
+            params={
+                "latitude": lat,
+                "longitude": lon,
+                "current": "temperature_2m,wind_speed_10m,weather_code",
+            },
+            timeout=10,
+        ).json()
+
+        temp=weather['current']['temperature_2m']
+        wind_speed=weather['current']['wind_speed_10m']
+        weather_code=weather['current']['weather_code']
+
+        weather_condition=f'temp={temp}\n wind speed={wind_speed}\n weather_code= {weather_code}'
+
+        return weather_condition
+
+    except Exception as e:
+        return (f'Weather tool failed ..{e}')
+
+
+    
