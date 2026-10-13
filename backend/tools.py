@@ -2,6 +2,7 @@ from langchain_core.tools import tool
 from tavily import TavilyClient
 from dotenv import load_dotenv
 import requests
+import numexpr
 load_dotenv()
 
 #                                                     Web Search Tool
@@ -85,4 +86,20 @@ def weather_tool(city:str)->str:
         return (f'Weather tool failed ..{e}')
 
 
-    
+
+@tool
+def calculator(expression:str)->str:
+    '''
+    Evaluate a mathematical expression, e.g. "25 * 4 + 10".
+
+    Args:
+        expression: A math expression using numbers and operators only, no words.
+    '''
+
+    try:
+        answer= numexpr.evaluate(expression).item()
+        return str(answer)
+
+    except Exception as e:
+        return (f'error occured while solving the expression {e}')
+

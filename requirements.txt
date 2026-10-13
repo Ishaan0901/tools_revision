@@ -5,3 +5,4 @@ langchain-tavily
 langgraph
 python-dotenv
 tavily-python
+numexpr
