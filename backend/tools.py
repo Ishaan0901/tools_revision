@@ -86,7 +86,7 @@ def weather_tool(city:str)->str:
         return (f'Weather tool failed ..{e}')
 
 
-
+#                                                     Calculator Tool
 @tool
 def calculator(expression:str)->str:
     '''
