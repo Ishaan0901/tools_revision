@@ -44,7 +44,7 @@ tool_node=ToolNode(tools)
 
 def route_after_query(state):
     last = state['messages'][-1].content
-    return END if last.lower() in ('exit', 'quit') else 'llm'
+    return END if last.lower().strip() in ('exit', 'quit') else 'llm'
 
 
 

@@ -6,3 +6,4 @@ langgraph
 python-dotenv
 tavily-python
 numexpr
+requests
